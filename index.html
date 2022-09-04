@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 CAR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>ESP32 CAR</h1>
+  <p>Motor state: <strong> %STATE%</strong></p>
+  <p><button class="button" type="button" id="btnForward" onmousedown="forward()" onmouseup="stop()">FORWARD</button></p>
+  <p><button class="button button3" type="button" onmousedown="stop()" onmouseup="stop()">STOP</button></p>
+  <p><button class="button button2" type="button" onmousedown="backward()" onmouseup="stop()">BACKWARD</button></p>
+  <p><button class="button button4" type="button" onmousedown="left()" onmouseup="stop()">LEFT</button></p>
+  <p><button class="button button5" type="button" onmousedown="right()" onmouseup="stop()">RIGHT</button></p>
+  <script src="/scripts.js "></script>
+</body>
+</html>
