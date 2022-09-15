@@ -8,12 +8,14 @@
 </head>
 <body>
   <h1>ESP32 CAR</h1>
-  <p>Motor state: <strong> %STATE%</strong></p>
-  <p><button class="button" type="button" id="btnForward" onmousedown="forward()" onmouseup="stop()">FORWARD</button></p>
-  <p><button class="button button3" type="button" onmousedown="stop()" onmouseup="stop()">STOP</button></p>
-  <p><button class="button button2" type="button" onmousedown="backward()" onmouseup="stop()">BACKWARD</button></p>
-  <p><button class="button button4" type="button" onmousedown="left()" onmouseup="stop()">LEFT</button></p>
-  <p><button class="button button5" type="button" onmousedown="right()" onmouseup="stop()">RIGHT</button></p>
+
+  <p><button class="button" type="button" ontouchstart="fetch('/forward')" ontouchend="fetch('/stop')" >&#8593;</button></p>
+  <p><button class="button button3" type="button" ontouchstart="fetch('/stop')" ontouchend="fetch('/stop')" >STOP</button></p>
+  <p><button class="button button2" type="button" ontouchstart="fetch('/backward')" ontouchend="fetch('/stop')" >&#8595;</button></p>
+  <p><button class="button button4" type="button" ontouchstart="fetch('/right')" ontouchend="fetch('/stop')" >&#8592;</button></p>
+  <p><button class="button button5" type="button" ontouchstart="fetch('/left')" ontouchend="fetch('/stop')" >&#8594;</button></p>
+  <p><span id="textSliderValue">%SLIDERVALUE%</span></p>
+  <p><input type="range" onchange="updateSliderPWM(this)" id="pwmSlider" min="0" max="255" value="%SLIDERVALUE%" step="1" class="slider"></p>
   <script src="/scripts.js "></script>
 </body>
 </html>
