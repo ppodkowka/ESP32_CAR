@@ -1,3 +1,7 @@
+
+body {
+  background-image: url('https://i.pinimg.com/originals/ec/eb/79/eceb7990b39fa62d4189f57f2076712f.png');  
+}
 html {
   font-family: Verdana;
   display: inline-block;
@@ -13,7 +17,7 @@ p{
 }
 .button {
   display: inline-block;
-  background-color: #0070ba;
+  background-color: #2E4057;
   border: none;
   border-radius: 10px;
   color: #c9d6e0;
@@ -22,24 +26,54 @@ p{
   font-size: 30px;
   margin: 2px;
   cursor: pointer;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
 }
-.button2 {
-  background-color: #0070ba;
+.button:active {
+  background-color: #24232b8e;
+  transform: scale(0.98);
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+
 }
+
 .button3 {
-  background-color: #f44336;
+  background-color: #922D50;
 }
 .button4 {
-  background-color: #12723a;
+  background-color: #2E4057;
   position:relative;
   top: -188px;
   left: -170px;
  
 }
 .button5 {
-  background-color: #12723a;
+  background-color: #2E4057;
   position:relative;
   top: -282px;
-  left: 180px;
+  left: 170px;
   
 }
+.slider { 
+  -webkit-appearance: none; 
+  margin: 14px; 
+  width: 360px; 
+  height: 25px; 
+  background: #FFD65C;
+  outline: none; 
+  -webkit-transition: .2s; 
+  transition: opacity .2s;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; 
+  appearance: none; 
+  width: 35px; 
+  height: 35px; 
+  background: #003249; 
+  cursor: pointer;
+}
+.slider::-moz-range-thumb { 
+  width: 35px; 
+  height: 35px; 
+  background: #003249; 
+  cursor: pointer; 
+} 
+
