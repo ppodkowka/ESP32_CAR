@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="/scripts.js"></script>
 </head>
 <body>
   <h1>ESP32 CAR</h1>
-
   <p><button class="button" type="button" ontouchstart="fetch('/forward')" ontouchend="fetch('/stop')" >&#8593;</button></p>
   <p><button class="button button3" type="button" ontouchstart="fetch('/stop')" ontouchend="fetch('/stop')" >STOP</button></p>
   <p><button class="button button2" type="button" ontouchstart="fetch('/backward')" ontouchend="fetch('/stop')" >&#8595;</button></p>
   <p><button class="button button4" type="button" ontouchstart="fetch('/right')" ontouchend="fetch('/stop')" >&#8592;</button></p>
   <p><button class="button button5" type="button" ontouchstart="fetch('/left')" ontouchend="fetch('/stop')" >&#8594;</button></p>
-  <p><span id="textSliderValue">%SLIDERVALUE%</span></p>
-  <p><input type="range" onchange="updateSliderPWM(this)" id="pwmSlider" min="0" max="255" value="%SLIDERVALUE%" step="1" class="slider"></p>
-  <script src="/scripts.js "></script>
+  <p>CAR SPEED: <span id="speedSliderValue">%CARSPEED%</span></p>
+  <p><input type="range" onchange="updateSpeedSlider(this)" id="speedSlider" min="100" max="255" value="%CARSPEED%" step="1" class="slider"></p>
 </body>
 </html>
