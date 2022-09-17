@@ -57,6 +57,7 @@ p{
   margin: 14px; 
   width: 360px; 
   height: 25px; 
+  border-radius: 10px; 
   background: #FFD65C;
   outline: none; 
   -webkit-transition: .2s; 
@@ -65,6 +66,7 @@ p{
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; 
   appearance: none; 
+  border-radius: 10px; 
   width: 35px; 
   height: 35px; 
   background: #003249; 
