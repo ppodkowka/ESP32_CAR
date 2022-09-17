@@ -1,8 +1,8 @@
-function updateSliderPWM(element) {
-    var pwmSliderValue = document.getElementById("pwmSlider").value;
-    document.getElementById("textSliderValue").innerHTML = pwmSliderValue;
-    console.log(pwmSliderValue);
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open("GET", "/slider?value="+pwmSliderValue, true);
-    httpRequest.send();
-}
+function updateSpeedSlider(element) {
+    var carSpeed = document.getElementById("speedSlider").value;
+    document.getElementById("speedSliderValue").innerHTML = carSpeed;
+    console.log(carSpeed);
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/slider?value="+carSpeed, true);
+    xhr.send();
+  }
