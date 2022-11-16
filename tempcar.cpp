@@ -9,6 +9,7 @@
 #include "esp_http_server.h"
 #include <PCF8574.h>
 
+
 // setting car wifi credentials
 const char* ssid = "MyCar";
 const char* password = "123456789";
@@ -35,9 +36,17 @@ const char* password = "123456789";
 #define PCLK_GPIO_NUM     22
 
 // defining expander and pins SDA=12 and SCL=13
-PCF8574 expander(0x20,12,13); 
+//PCF8574 expander(0x20,12,13); 
 
+// Create a Two Wire Instance for expander
+TwoWire I2C_expander = TwoWire(0);
 
+// Set i2c address
+PCF8574 expander(&I2C_expander, 0x20);
+
+// defining pins for expander
+const int expander_SDA = 14;
+const int expander_SDL = 15;
 
 // defining motor 1 and 2
 const int motor1Pin1 = 0; // bylo 14 teraz 0 bo expander
@@ -120,11 +129,9 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
         -webkit-transition: .2s; 
         transition: opacity .2s;
         }
-
        .slider:hover {
         opacity: 1; 
         }
-
        .slider::-webkit-slider-thumb {
         -webkit-appearance: none; 
         appearance: none; 
@@ -146,13 +153,11 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
         width: 60px;
         height: 34px;
       }
-
       .switch input { 
         opacity: 0;
         width: 0;
         height: 0;
       }
-
       .slider1 {
         position: absolute;
         cursor: pointer;
@@ -164,7 +169,6 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
         -webkit-transition: .4s;
         transition: .4s;
       }
-
       .slider1:before {
         position: absolute;
         content: "";
@@ -176,26 +180,21 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
         -webkit-transition: .4s;
         transition: .4s;
       }
-
       input:checked + .slider1 {
         background-color: #2196F3;
       }
-
       input:focus + .slider1 {
         box-shadow: 0 0 1px #2196F3;
       }
-
       input:checked + .slider1:before {
         -webkit-transform: translateX(26px);
         -ms-transform: translateX(26px);
         transform: translateX(26px);
       }
-
       /* Rounded sliders */
       .slider1.round {
         border-radius: 34px;
       }
-
       .slider1.round:before {
         border-radius: 50%;
       }
@@ -395,6 +394,17 @@ static esp_err_t cmd_handler(httpd_req_t *req){
       digitalWrite(ledPin, LOW);
       Serial.println("l");
     }
+    // ledState = digitalRead(ledPin);
+    // Serial.println(ledState);
+    // if(ledState == LOW){
+    //    Serial.println("high");
+    //   digitalWrite(ledPin, HIGH);
+    // }
+    // else if(ledState == HIGH){
+    //   Serial.println("low");
+    //   digitalWrite(ledPin, LOW);
+    // }
+    
   }
   else if(!strcmp(variable, "speed")) {
     Serial.println("Slider");
@@ -450,9 +460,11 @@ void startCameraServer(){
 
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
-
   
-  expander.pinMode(motor1Pin1, OUTPUT); // P0 is motor1Pin1
+  I2C_expander.begin(expander_SDA, expander_SDL, 100000U); // 100kHz
+  delay(1000);
+
+  expander.pinMode(motor1Pin1, OUTPUT);
   expander.pinMode(motor1Pin2, OUTPUT);
   expander.pinMode(motor2Pin1, OUTPUT);
   expander.pinMode(motor2Pin2, OUTPUT);
@@ -476,7 +488,7 @@ void setup() {
   expander.digitalWrite(motor1Pin2, LOW);
   expander.digitalWrite(motor2Pin1, LOW);
   expander.digitalWrite(motor2Pin2, LOW);
-  digitalWrite(ledPin, LOW);
+  expander.digitalWrite(ledPin, LOW);
 
 
   
