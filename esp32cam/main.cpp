@@ -141,7 +141,7 @@ const int myTX = 14;
 char command  = ' ';
 
 // for battery tester
-String battery_percent  = "--%";
+String battery_percent  = "100%";
 
 // defining enable pin for motor 1 and 2
  
@@ -322,7 +322,10 @@ void loop()
   {
     char command = mySerial.read();
    
-    if (command == '1') {
+    if (command == '0') {
+      battery_percent = "0%";
+    }
+    else if (command == '1') {
       battery_percent = "10%";
     }
     else if (command == '2') {
