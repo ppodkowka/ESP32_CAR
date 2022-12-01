@@ -41,20 +41,56 @@ int first_measurement = 0;
 // variable to store last time
 unsigned long lastMillis;
 
+
+// minimal voltage that is safe for one 18650 battery is around 3V
+// all battery perecentage are approximations just to give user a bit information when batteries should be charged
+// Im am using 2 batteries so I will assume that 6V will be equal to 0% battery
+// full battery will be equal to 8,2V (I tested it with multimeter)
+// 6V = 0%, 8,2V = 100%
 // this function gets loadvoltage od battery and then turn it to battery % 
 void readBatteryLevel(){
   shuntvoltage = ina219.getShuntVoltage_mV();
   busvoltage = ina219.getBusVoltage_V();
   loadvoltage = busvoltage + (shuntvoltage / 1000);
 
-  if(loadvoltage > 8.0){
+  if(loadvoltage >= 8.2){
+    battery_percent = 10;
+  }
+  else if(loadvoltage <= 8.2  && loadvoltage > 8.1){
     battery_percent = 9;
   }
-  else if(loadvoltage < 8.0){
+  else if(loadvoltage <= 8.1  && loadvoltage > 7.9){
     battery_percent = 8;
   }
+  else if(loadvoltage <= 7.9  && loadvoltage > 7.6){
+    battery_percent = 7;
+  }
+  else if(loadvoltage <= 7.6  && loadvoltage > 7.4){
+    battery_percent = 6;
+  }
+  else if(loadvoltage <= 7.6  && loadvoltage > 7.4){
+    battery_percent = 5;
+  }
+  else if(loadvoltage <= 7.4  && loadvoltage > 7.2){
+    battery_percent = 4;
+  }
+  else if(loadvoltage <= 7.2  && loadvoltage > 7.0){
+    battery_percent = 3;
+  }
+  else if(loadvoltage <= 7.0  && loadvoltage > 6.8){
+    battery_percent = 2;
+  }
+  else if(loadvoltage <= 6.8 && loadvoltage > 6.3){
+    battery_percent = 1;
+  }
+  else if(loadvoltage <= 6.3){
+    battery_percent = 0;
+  }
 
-  SerialPort.print(battery_percent);
+  // nie updatuj jesli bateria ma 100% bo w głownym programie jest domyslnie ustawione 100%
+  if(battery_percent != 10){
+    SerialPort.print(battery_percent);
+  }
 }
 
 // this function stops car is distance to object is very close and car is going into that object
