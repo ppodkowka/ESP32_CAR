@@ -141,23 +141,18 @@ const int myTX = 14;
 char command  = ' ';
 
 // for battery tester
-String battery_percent  = "100%";
+String battery_percent  = "--%";
 
 // defining enable pin for motor 1 and 2
- 
 const int enablePin = 2;  
 
-int stopFlag = 0;
-String direction;
-
 // defines for controlling LED 
-const int ledPin = 4;
-int ledState = 0;   
+const int ledPin = 4;  
 int ledBrightness = 0;
 int ledFlag = 0;
 
 //Setting PWM properties
-const int freq = 1000;
+const int freq = 30000;
 const int pwmChannel = 0;
 const int pwmChannelLED = 1;
 const int pwmResolution = 8;
@@ -243,37 +238,28 @@ void setup(void)
   // go FORWARD
   server.on("/forward", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("FORWARD");
-    direction = "forward";
-    if(stopFlag == 0){
-      mySerial.print(1); // tell slave to go forward  
-    }
+    mySerial.print(1); // tell slave to go forward  
     request->send(SPIFFS, "/index.html");
   });
 
   // go BACKWARD
   server.on("/backward", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("BACKWARD");
-    direction = "backward";
     mySerial.print(2); // tell slave to go backwards 
-    stopFlag = 0;
     request->send(SPIFFS, "/index.html");
   });
 
   // turn LEFT
   server.on("/left", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("LEFT");
-    direction = "left";
     mySerial.print(4); // tell slave to go left 
-    stopFlag = 0;
     request->send(SPIFFS, "/index.html");
   });
 
   // turn RIGHT
   server.on("/right", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("RIGHT");
-    direction = "right";
     mySerial.print(3); // tell slave to go right
-    stopFlag = 0;
     request->send(SPIFFS, "/index.html");
   });
 
@@ -322,10 +308,7 @@ void loop()
   {
     char command = mySerial.read();
    
-    if (command == '0') {
-      battery_percent = "0%";
-    }
-    else if (command == '1') {
+    if (command == '1') {
       battery_percent = "10%";
     }
     else if (command == '2') {
@@ -352,8 +335,12 @@ void loop()
     else if (command == '9') {
       battery_percent = "90%";
     }
-    
+    else if (command == '0') {
+      battery_percent = "100%";
+    }
   }
+
+
   wsCamera.cleanupClients();  
   sendCameraPicture(); 
   
