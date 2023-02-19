@@ -1,5 +1,3 @@
-//this is slave for esp32cam project, this program is resposible for controlling DC motors, stopping car if obsticle is in close range and getting battery %
-
 #include <HardwareSerial.h>
 #include "Arduino.h"
 #include "Wire.h"
@@ -32,11 +30,10 @@ const int echoPin = 18;
 
 // battery tester
 Adafruit_INA219 ina219;
+int battery_percent = 0;
 float shuntvoltage = 0;
 float busvoltage = 0;
 float loadvoltage = 0;
-int battery_percent = 0;
-int first_measurement = 0;
 
 // variable to store last time
 unsigned long lastMillis;
@@ -47,50 +44,44 @@ unsigned long lastMillis;
 // Im am using 2 batteries so I will assume that 6V will be equal to 0% battery
 // full battery will be equal to 8,2V (I tested it with multimeter)
 // 6V = 0%, 8,2V = 100%
-// this function gets loadvoltage od battery and then turn it to battery % 
+// this function gets loadvoltage of battery and then turn into battery % 
 void readBatteryLevel(){
   shuntvoltage = ina219.getShuntVoltage_mV();
   busvoltage = ina219.getBusVoltage_V();
   loadvoltage = busvoltage + (shuntvoltage / 1000);
 
-  if(loadvoltage >= 8.2){
-    battery_percent = 10;
+  if(loadvoltage > 8.15){
+    battery_percent = 0; // 100%
   }
-  else if(loadvoltage <= 8.2  && loadvoltage > 8.1){
-    battery_percent = 9;
+  else if(loadvoltage <= 8.15  && loadvoltage > 7.75){
+    battery_percent = 9; // 90%
   }
-  else if(loadvoltage <= 8.1  && loadvoltage > 7.9){
-    battery_percent = 8;
+  else if(loadvoltage <= 7.75  && loadvoltage > 7.56){
+    battery_percent = 8; // 80%
   }
-  else if(loadvoltage <= 7.9  && loadvoltage > 7.6){
-    battery_percent = 7;
+  else if(loadvoltage <= 7.56  && loadvoltage > 7.4){
+    battery_percent = 7; // 70%
   }
-  else if(loadvoltage <= 7.6  && loadvoltage > 7.4){
-    battery_percent = 6;
+  else if(loadvoltage <= 7.4  && loadvoltage > 7.16){
+    battery_percent = 6; // 60%
   }
-  else if(loadvoltage <= 7.6  && loadvoltage > 7.4){
-    battery_percent = 5;
+  else if(loadvoltage <=7.16   && loadvoltage > 7.05){
+    battery_percent = 5; // 50%
   }
-  else if(loadvoltage <= 7.4  && loadvoltage > 7.2){
-    battery_percent = 4;
+  else if(loadvoltage <= 7.05  && loadvoltage > 6.9){
+    battery_percent = 4; // 40%
   }
-  else if(loadvoltage <= 7.2  && loadvoltage > 7.0){
-    battery_percent = 3;
+  else if(loadvoltage <= 6.9  && loadvoltage > 6.75){
+    battery_percent = 3; // 30%
   }
-  else if(loadvoltage <= 7.0  && loadvoltage > 6.8){
-    battery_percent = 2;
+  else if(loadvoltage <= 6.75  && loadvoltage > 6.56){
+    battery_percent = 2; // 20%
   }
-  else if(loadvoltage <= 6.8 && loadvoltage > 6.3){
-    battery_percent = 1;
+  else if(loadvoltage <= 6.56 ){
+    battery_percent = 1; // 10%
   }
-  else if(loadvoltage <= 6.3){
-    battery_percent = 0;
-  }
-
-  // nie updatuj jesli bateria ma 100% bo w głownym programie jest domyslnie ustawione 100%
-  if(battery_percent != 10){
-    SerialPort.print(battery_percent);
-  }
+  
+  SerialPort.print(battery_percent);
 }
 
 // this function stops car is distance to object is very close and car is going into that object
@@ -109,19 +100,24 @@ void checkDistance(){
   // Calculate the distance
   distanceCm = duration * SOUND_SPEED/2;
 
-  if(distanceCm < 30 && direction == "forward"){
+  if(distanceCm < 10 && direction == "forward"){
     digitalWrite(motor1Pin1, LOW);
     digitalWrite(motor1Pin2, LOW);
     digitalWrite(motor2Pin1, LOW);
     digitalWrite(motor2Pin2, LOW);
     stopFlag = 1;
   }
+  else{
+    stopFlag = 0;
+  }
 }
+
 
 void setup()
 {
-  //starting uart connection
-  SerialPort.begin(9600, SERIAL_8N1, rxPin, txPin);
+  Serial.begin(115200);
+  SerialPort.begin(9600, SERIAL_8N1, rxPin, txPin); // starting uart
+  ina219.begin(); // starting ina219 sensor
 
   // setting motor pins as outputs
   pinMode(motor1Pin1, OUTPUT);
@@ -162,7 +158,6 @@ void loop()
       digitalWrite(motor1Pin2, LOW);
       digitalWrite(motor2Pin1, HIGH);
       digitalWrite(motor2Pin2, LOW);
-      stopFlag = 0;
     }
     if (command == '3') {
       //right
@@ -171,7 +166,6 @@ void loop()
       digitalWrite(motor1Pin2, LOW);
       digitalWrite(motor2Pin1, LOW);
       digitalWrite(motor2Pin2, HIGH);
-      stopFlag = 0;
     }
     if (command == '4') {
       //left
@@ -180,19 +174,18 @@ void loop()
       digitalWrite(motor1Pin2, HIGH);
       digitalWrite(motor2Pin1, HIGH);
       digitalWrite(motor2Pin2, LOW);
-      stopFlag = 0;
     }
   }
 
   checkDistance();
 
-  // this happens in the beggining just to take starting battery percentage moze nawet 1 sekunde dac - do sprawdzenia 
+  // this happens in the beggining just to take starting battery percentage
   if(millis() < 2*1000UL){
     readBatteryLevel();
   }
 
-  // this part updates battery percentage every 3 minutes
-  if (millis() - lastMillis >= 3*60*1000UL) {
+  // this part updates battery percentage every minute
+  if (millis() - lastMillis >= 1*60*1000UL) {
    lastMillis = millis();  //get ready for the next iteration
    readBatteryLevel();
   }
